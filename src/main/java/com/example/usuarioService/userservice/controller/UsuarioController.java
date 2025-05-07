@@ -2,8 +2,10 @@ package com.example.usuarioService.userservice.controller;
 
 import com.example.usuarioService.userservice.dto.request.UsuarioRequestDTO;
 import com.example.usuarioService.userservice.dto.response.UsuarioResponseDTO;
+import com.example.usuarioService.userservice.exception.UsuarioNaoEncontradoException;
 import com.example.usuarioService.userservice.service.UsuarioService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,16 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable UUID id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UsuarioResponseDTO> buscarPorEmail(@Valid @PathVariable String email) {
+        try {
+            UsuarioResponseDTO usuarioResponse = usuarioService.buscarPorEmail(email);
+            return ResponseEntity.ok(usuarioResponse);
+        } catch (UsuarioNaoEncontradoException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // Retorna 404 caso não encontre o usuário
+        }
     }
 
     @PutMapping("/{id}")
