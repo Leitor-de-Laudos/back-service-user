@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: leitor-de-laudos-back-user
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: db-user-cliee
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - minha-rede
+
+volumes:
+  postgres_data:
+
+networks:
+  minha-rede:
