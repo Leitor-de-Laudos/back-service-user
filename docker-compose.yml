@@ -15,6 +15,21 @@ services:
     networks:
       - minha-rede
 
+  backend:
+    build:
+      context: .
+    container_name: leitor-de-laudos-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/db-user-cliee
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: 123456
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - minha-rede
+
 volumes:
   postgres_data:
 
