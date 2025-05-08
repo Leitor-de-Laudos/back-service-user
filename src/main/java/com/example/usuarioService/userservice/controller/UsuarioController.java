@@ -7,11 +7,13 @@ import com.example.usuarioService.userservice.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -30,6 +32,14 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
+    }
+
+    @CrossOrigin(origins = "http://localhost:5173/auth/signin")
+    @GetMapping("/me")
+    public ResponseEntity<?> getUsuarioLogado() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UsuarioResponseDTO usuario = usuarioService.buscarPorEmail(email);
+        return ResponseEntity.ok(usuario);
     }
 
     @GetMapping("/{id}")

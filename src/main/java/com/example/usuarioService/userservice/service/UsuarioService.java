@@ -6,9 +6,12 @@ import com.example.usuarioService.userservice.dto.response.UsuarioResponseDTO;
 import com.example.usuarioService.userservice.entity.Usuario;
 import com.example.usuarioService.userservice.exception.UsuarioNaoEncontradoException;
 import com.example.usuarioService.userservice.repository.UsuarioRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,6 +40,17 @@ public class UsuarioService {
 
         Usuario salvo = usuarioRepository.save(usuario);
         return toResponseDTO(salvo);
+    }
+
+    public UserDetails carregarUserDetailsPorEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário com email " + email + " não encontrado"));
+
+        return new org.springframework.security.core.userdetails.User(
+                usuario.getEmail(),
+                usuario.getSenha(),
+                new ArrayList<>()  // ou authorities, se quiser
+        );
     }
 
     public List<UsuarioResponseDTO> listarTodos() {
@@ -76,7 +90,8 @@ public class UsuarioService {
         }
 
         if (dto.getSenha() != null) {
-            usuario.setSenha(dto.getSenha());
+            String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
+            usuario.setSenha(senhaCriptografada);
         }
 
         Usuario atualizado = usuarioRepository.save(usuario);

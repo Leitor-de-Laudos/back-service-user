@@ -39,8 +39,15 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token expirado: " + e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            System.out.println("Token inválido: " + e.getMessage());
+        } catch (MalformedJwtException e) {
+            System.out.println("Token mal formado: " + e.getMessage());
         } catch (JwtException e) {
-            return false;
+            System.out.println("Erro geral ao validar token: " + e.getMessage());
         }
+        return false;
     }
 }
